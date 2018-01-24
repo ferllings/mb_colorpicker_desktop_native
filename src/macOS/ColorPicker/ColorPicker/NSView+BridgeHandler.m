@@ -20,6 +20,7 @@
             CFArrayRemoveValueAtIndex(window_list_filtered, idx);
         }
     }
+    CFRelease(window_list);
     return window_list_filtered;
 }
 
