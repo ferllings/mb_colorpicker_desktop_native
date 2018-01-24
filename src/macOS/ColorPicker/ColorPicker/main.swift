@@ -9,8 +9,6 @@
 import Cocoa
 
 let app = NSApplication.shared
-NSApp.setActivationPolicy(.accessory)
-let controller = AppDelegate()
-app.delegate = controller
-
+NSApp.setActivationPolicy(.regular)
+app.delegate = AppDelegate()
 app.run()

@@ -25,7 +25,7 @@ class MaskWindow: NSWindow {
                    backing: .buffered,
                    defer: false)
         backgroundColor = .clear
-        level = .normal
+        level = .statusBar
         alphaValue = 1.0
         isOpaque = false
         contentView = MaskView { error in
@@ -64,18 +64,5 @@ class MaskWindow: NSWindow {
             fflush(stdout)
         }
         super.close()
-    }
-
-    override func mouseDown(with event: NSEvent) {
-        close()
-    }
-
-    override func mouseMoved(with event: NSEvent) {
-        if var mouse_pos = event.cgEvent?.unflippedLocation {
-            mouse_pos.x -= UI_WINDOW_WIDTH/2.0
-            mouse_pos.y -= UI_WINDOW_HEIGHT/2.0
-            setFrameOrigin(mouse_pos)
-        }
-        NSApp.activate(ignoringOtherApps: true)
     }
 }

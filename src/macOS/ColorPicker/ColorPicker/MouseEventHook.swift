@@ -36,10 +36,9 @@ class MouseEventHook {
     fileprivate var mouse_event_tap: CFMachPort?
     fileprivate var event_tap_src_ref: CFRunLoopSource?
     init() {
-        var emask: CGEventMask = 0
-        emask |= CGEventMask(CGEventType.mouseMoved.rawValue)
-        emask |= CGEventMask(CGEventType.rightMouseDown.rawValue)
-        emask |= CGEventMask(CGEventType.leftMouseDown.rawValue)
+        var emask: CGEventMask = CGEventMask(1 << CGEventType.mouseMoved.rawValue)
+        emask |= CGEventMask(1 << CGEventType.rightMouseDown.rawValue)
+        emask |= CGEventMask(1 << CGEventType.leftMouseDown.rawValue)
         mouse_event_tap = CGEvent.tapCreate(tap: .cgAnnotatedSessionEventTap,
                                             place: .tailAppendEventTap,
                                             options: .listenOnly,

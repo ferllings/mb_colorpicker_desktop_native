@@ -11,9 +11,39 @@ class MaskView: NSView {
 
     let display_id_list_size: UInt32 = 16
     var display_id_list: [CGDirectDisplayID]
-    var color_space_list = [CGColorSpace]()
+    var color_space_list: [CGColorSpace]
     var display_bound_list: [CGRect]
-    var image_surround_current_cursor: CGImage?
+    var image_surround_current_cursor: CGImage? {
+        didSet {
+            guard let cgImg = image_surround_current_cursor else {
+                return
+            }
+            let ns_bitmap_image = NSBitmapImageRep(cgImage: cgImg)
+            for y in 0..<Int(CAPTURE_HEIGHT) {
+                for x in 0..<Int(CAPTURE_WIDTH) {
+                    var color_values = autoreleasepool { () -> [CGFloat] in
+                        let color = ns_bitmap_image.colorAt(x: x, y: y)
+                        let red = color?.redComponent ?? 0
+                        let green = color?.greenComponent ?? 0
+                        let blue = color?.blueComponent ?? 0
+                        return [red, green, blue, 1]
+                    }
+                    let fixedColor = autoreleasepool { () -> (red: CGFloat, green: CGFloat, blue: CGFloat) in
+                        guard let cb = current_color_space,
+                            let color = CGColor(colorSpace: cb, components: &color_values),
+                            let nsColor = NSColor(cgColor: color),
+                            let fixedColor = nsColor.usingColorSpace(.sRGB) else {
+                                return (0,0,0)
+                        }
+                        return (fixedColor.redComponent, fixedColor.greenComponent, fixedColor.blueComponent)
+                    }
+                    CAPTUREED_PIXEL_COLOR_R[CAPTURE_HEIGHT-1-y][x] = fixedColor.red
+                    CAPTUREED_PIXEL_COLOR_G[CAPTURE_HEIGHT-1-y][x] = fixedColor.green
+                    CAPTUREED_PIXEL_COLOR_B[CAPTURE_HEIGHT-1-y][x] = fixedColor.blue
+                }
+            }
+        }
+    }
     var zoomed_image_surround_current_cursor: CGImage?
     var current_color_space: CGColorSpace?
     var mask_circle: CGImage?
@@ -24,7 +54,7 @@ class MaskView: NSView {
 
     init?(failedCallBack:((Error?) -> Void)? = nil) {
         // 初始化数组
-        let initializedValue = Array(repeating: CGFloat.leastNonzeroMagnitude, count: CAPTURE_HEIGHT)
+        let initializedValue:[CGFloat] = Array(repeating: 0, count: CAPTURE_HEIGHT)
         CAPTUREED_PIXEL_COLOR_R = Array(repeating: initializedValue, count: CAPTURE_WIDTH)
         CAPTUREED_PIXEL_COLOR_G = Array(repeating: initializedValue, count: CAPTURE_WIDTH)
         CAPTUREED_PIXEL_COLOR_B = Array(repeating: initializedValue, count: CAPTURE_WIDTH)
@@ -32,6 +62,7 @@ class MaskView: NSView {
         display_id_list = Array(repeating: 0, count: Int(display_id_list_size))
         color_space_list = Array(repeating: CGColorSpace(name: CGColorSpace.sRGB)!, count: Int(display_id_list_size))
         display_bound_list = Array(repeating: CGRect.zero, count: Int(display_id_list_size))
+
         super.init(frame: .zero)
         do {
             try loadImage(image: Bundle.main.image(forResource: maskPNGName))
@@ -56,10 +87,15 @@ class MaskView: NSView {
         if let mask = mask_circle {
             ctx?.draw(mask, in: wnd_rect)
         }
-        super.draw(dirtyRect)
     }
 
     func refreshPictureSurroundCurrentCursor() {
+        if image_surround_current_cursor != nil {
+            image_surround_current_cursor = nil
+        }
+        if zoomed_image_surround_current_cursor != nil {
+            zoomed_image_surround_current_cursor = nil
+        }
         guard let window_list = CGWindowListCopyWindowInfo(.optionOnScreenOnly, kCGNullWindowID) else {
             return
         }
@@ -76,12 +112,9 @@ class MaskView: NSView {
         let cursor_position = event.location
         let displayCount = Int(display_count)
         var display_id_idx = 0xFFFF
-        for idx in 0..<displayCount {
-            let rect = display_bound_list[idx]
-            if rect.contains(cursor_position) {
-                display_id_idx = idx
-                break
-            }
+        for idx in 0..<displayCount where display_bound_list[idx].contains(cursor_position) {
+            display_id_idx = idx
+            break
         }
         if display_id_idx == 0xFFFF {
             resetDisplayId(display_id_idx: &display_id_idx,
@@ -93,16 +126,16 @@ class MaskView: NSView {
                           y: CGFloat(CAPTURE_HEIGHT/2),
                           width: CGFloat(CAPTURE_WIDTH),
                           height: CGFloat(CAPTURE_HEIGHT))
-        guard let windowArray = window_list_filtered,
-            let cg_image = CGImage(windowListFromArrayScreenBounds: rect,
-                                   windowArray: windowArray,
-                                   imageOption: .nominalResolution) else {
-                return
+        guard let windowArray = window_list_filtered else {
+            return
         }
-        fixColorSpace(cg_image: cg_image)
-        image_surround_current_cursor = cg_image
-        window_list_filtered = nil
+        image_surround_current_cursor = CGImage(windowListFromArrayScreenBounds: rect,
+                                                windowArray: windowArray,
+                                                imageOption: .nominalResolution)
         drawPixels()
+        defer {
+            window_list_filtered = nil
+        }
     }
 }
 
@@ -134,8 +167,8 @@ extension MaskView {
         var displayCount: UInt32 = 0
         if CGError.success != CGGetActiveDisplayList(display_id_list_size, &display_id_list, &displayCount) {
             let error = NSError(domain: error_domain,
-                          code: -1001,
-                          userInfo: [NSLocalizedDescriptionKey: "CGGetActiveDisplayList Failed"])
+                                code: -1001,
+                                userInfo: [NSLocalizedDescriptionKey: "CGGetActiveDisplayList Failed"])
             throw error
         }
         mask_circle = cgImg
@@ -149,8 +182,8 @@ extension MaskView {
     }
 
     fileprivate func resetDisplayId(display_id_idx: inout Int,
-                        displayCount:Int,
-                        cursorPoint cursor: CGPoint) {
+                                    displayCount:Int,
+                                    cursorPoint cursor: CGPoint) {
         var checkPoints = Array(repeating: CGPoint.zero, count: 4)
         checkPoints[0].x = cursor.x - 10
         checkPoints[0].y = cursor.y - 10
@@ -185,34 +218,6 @@ extension MaskView {
         }
     }
 
-    // fix color space here
-    fileprivate func fixColorSpace(cg_image cgImg: CGImage) {
-        let ns_bitmap_image = NSBitmapImageRep(cgImage: cgImg)
-        for y in 0..<Int(CAPTURE_HEIGHT) {
-            for x in 0..<Int(CAPTURE_WIDTH) {
-                var color_values = autoreleasepool { () -> [CGFloat] in
-                    let color = ns_bitmap_image.colorAt(x: x, y: y)
-                    let red = color?.redComponent ?? 0
-                    let green = color?.greenComponent ?? 0
-                    let blue = color?.blueComponent ?? 0
-                    return [red, green, blue, 1]
-                }
-                let fixedColor = autoreleasepool { () -> (red: CGFloat, green: CGFloat, blue: CGFloat) in
-                    guard let cb = current_color_space,
-                        let color = CGColor(colorSpace: cb, components: &color_values),
-                        let nsColor = NSColor(cgColor: color),
-                        let fixedColor = nsColor.usingColorSpace(.sRGB) else {
-                        return (0,0,0)
-                    }
-                    return (fixedColor.redComponent, fixedColor.greenComponent, fixedColor.blueComponent)
-                }
-                CAPTUREED_PIXEL_COLOR_R[CAPTURE_HEIGHT-1-y][x] = fixedColor.red
-                CAPTUREED_PIXEL_COLOR_G[CAPTURE_HEIGHT-1-y][x] = fixedColor.green
-                CAPTUREED_PIXEL_COLOR_B[CAPTURE_HEIGHT-1-y][x] = fixedColor.blue
-            }
-        }
-    }
-
     fileprivate func drawPixels() {
         // prepare context
         let colorSpace = CGColorSpaceCreateDeviceRGB()
@@ -226,8 +231,8 @@ extension MaskView {
                             bitmapInfo: bitmapInfo)
         let mask_bound = CGRect(x: 8+2,
                                 y: 8+2,
-                                width: UI_WINDOW_WIDTH - (8+2)*2,
-                                height: UI_WINDOW_HEIGHT - (8+2)*2)
+                                width: UI_WINDOW_WIDTH-(8+2)*2,
+                                height: UI_WINDOW_HEIGHT-(8+2)*2)
         ctx?.saveGState()
         let clip_path = CGPath(ellipseIn: mask_bound, transform: nil)
         ctx?.addPath(clip_path)
@@ -248,7 +253,7 @@ extension MaskView {
                 let g = CAPTUREED_PIXEL_COLOR_G[y][x]
                 let b = CAPTUREED_PIXEL_COLOR_B[y][x]
                 ctx?.setFillColor(red: r, green: g, blue: b, alpha: 1)
-                let rect = CGRect(x: 8+1+(1 + GRID_PIXEL)*x,
+                let rect = CGRect(x: 8+1+(1+GRID_PIXEL)*x,
                                   y: 8+1+(1+GRID_PIXEL)*y,
                                   width: GRID_PIXEL,
                                   height: GRID_PIXEL)
@@ -286,10 +291,8 @@ extension MaskView {
                               green: delegate.TheG,
                               blue: delegate.TheB,
                               alpha: 1.0)
+            ctx?.fill(rect)
         }
-
-        ctx?.fill(rect)
-
         ctx?.restoreGState()
         zoomed_image_surround_current_cursor = ctx?.makeImage()
     }

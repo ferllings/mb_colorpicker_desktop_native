@@ -12,8 +12,8 @@
 		213E1C01201875A900794178 /* MaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213E1BFC201875A800794178 /* MaskView.swift */; };
 		213E1C02201875A900794178 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213E1BFD201875A800794178 /* Constants.swift */; };
 		213E1C03201875A900794178 /* MaskWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213E1BFE201875A800794178 /* MaskWindow.swift */; };
-		213E1C0620187BBB00794178 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213E1C0520187BBB00794178 /* main.swift */; };
 		213E1C08201883F400794178 /* MouseEventHook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213E1C07201883F400794178 /* MouseEventHook.swift */; };
+		213E1C0A20188ECF00794178 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213E1C0920188ECF00794178 /* main.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,8 +25,8 @@
 		213E1BFC201875A800794178 /* MaskView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MaskView.swift; sourceTree = "<group>"; };
 		213E1BFD201875A800794178 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		213E1BFE201875A800794178 /* MaskWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MaskWindow.swift; sourceTree = "<group>"; };
-		213E1C0520187BBB00794178 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		213E1C07201883F400794178 /* MouseEventHook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MouseEventHook.swift; sourceTree = "<group>"; };
+		213E1C0920188ECF00794178 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,7 +64,7 @@
 				213E1BFC201875A800794178 /* MaskView.swift */,
 				213E1BFE201875A800794178 /* MaskWindow.swift */,
 				213E1C07201883F400794178 /* MouseEventHook.swift */,
-				213E1C0520187BBB00794178 /* main.swift */,
+				213E1C0920188ECF00794178 /* main.swift */,
 				213E1BEF2018755100794178 /* Assets.xcassets */,
 				213E1BF42018755200794178 /* Info.plist */,
 				213E1BF52018755200794178 /* ColorPicker.entitlements */,
@@ -143,8 +143,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				213E1C03201875A900794178 /* MaskWindow.swift in Sources */,
-				213E1C0620187BBB00794178 /* main.swift in Sources */,
 				213E1BEE2018755100794178 /* AppDelegate.swift in Sources */,
+				213E1C0A20188ECF00794178 /* main.swift in Sources */,
 				213E1C08201883F400794178 /* MouseEventHook.swift in Sources */,
 				213E1C01201875A900794178 /* MaskView.swift in Sources */,
 				213E1C02201875A900794178 /* Constants.swift in Sources */,
