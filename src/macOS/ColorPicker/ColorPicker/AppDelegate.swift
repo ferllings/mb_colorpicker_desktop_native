@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class AppDelegate: NSObject, NSApplicationDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate {
 
     var mainWindow: NSWindow!
     // 输出值
@@ -25,19 +25,5 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         return true
-    }
-}
-
-/// Swift版printf
-@discardableResult
-func swiftprintf(format: String, _ arguments: CVarArg...) -> String? {
-    return withVaList(arguments) { va_list in
-        var buffer: UnsafeMutablePointer<Int8>? = nil
-        return format.withCString { CString in
-            guard vasprintf(&buffer, CString, va_list) != 0 else {
-                return nil
-            }
-            return String(validatingUTF8: buffer!)
-        }
     }
 }

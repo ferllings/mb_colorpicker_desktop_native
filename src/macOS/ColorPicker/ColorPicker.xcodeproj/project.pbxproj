@@ -14,6 +14,7 @@
 		213E1C03201875A900794178 /* MaskWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213E1BFE201875A800794178 /* MaskWindow.swift */; };
 		213E1C08201883F400794178 /* MouseEventHook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213E1C07201883F400794178 /* MouseEventHook.swift */; };
 		213E1C0A20188ECF00794178 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213E1C0920188ECF00794178 /* main.swift */; };
+		214D05942018D28C00CB3C22 /* NSView+BridgeHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 214D05932018D28C00CB3C22 /* NSView+BridgeHandler.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,9 @@
 		213E1BFE201875A800794178 /* MaskWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MaskWindow.swift; sourceTree = "<group>"; };
 		213E1C07201883F400794178 /* MouseEventHook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MouseEventHook.swift; sourceTree = "<group>"; };
 		213E1C0920188ECF00794178 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		214D058E2018D16700CB3C22 /* ColorPicker-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ColorPicker-Bridging-Header.h"; sourceTree = "<group>"; };
+		214D05922018D28C00CB3C22 /* NSView+BridgeHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSView+BridgeHandler.h"; sourceTree = "<group>"; };
+		214D05932018D28C00CB3C22 /* NSView+BridgeHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSView+BridgeHandler.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,11 +67,14 @@
 				213E1BFD201875A800794178 /* Constants.swift */,
 				213E1BFC201875A800794178 /* MaskView.swift */,
 				213E1BFE201875A800794178 /* MaskWindow.swift */,
+				214D05922018D28C00CB3C22 /* NSView+BridgeHandler.h */,
+				214D05932018D28C00CB3C22 /* NSView+BridgeHandler.m */,
 				213E1C07201883F400794178 /* MouseEventHook.swift */,
 				213E1C0920188ECF00794178 /* main.swift */,
 				213E1BEF2018755100794178 /* Assets.xcassets */,
 				213E1BF42018755200794178 /* Info.plist */,
 				213E1BF52018755200794178 /* ColorPicker.entitlements */,
+				214D058E2018D16700CB3C22 /* ColorPicker-Bridging-Header.h */,
 			);
 			path = ColorPicker;
 			sourceTree = "<group>";
@@ -104,6 +111,7 @@
 				TargetAttributes = {
 					213E1BE92018755100794178 = {
 						CreatedOnToolsVersion = 9.2;
+						LastSwiftMigration = 0920;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -147,6 +155,7 @@
 				213E1C0A20188ECF00794178 /* main.swift in Sources */,
 				213E1C08201883F400794178 /* MouseEventHook.swift in Sources */,
 				213E1C01201875A900794178 /* MaskView.swift in Sources */,
+				214D05942018D28C00CB3C22 /* NSView+BridgeHandler.m in Sources */,
 				213E1C02201875A900794178 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -264,6 +273,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = ColorPicker/ColorPicker.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -272,6 +282,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.MockingBot.ColorPicker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "ColorPicker/ColorPicker-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
@@ -280,6 +292,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = ColorPicker/ColorPicker.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -288,6 +301,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.MockingBot.ColorPicker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "ColorPicker/ColorPicker-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 			};
 			name = Release;

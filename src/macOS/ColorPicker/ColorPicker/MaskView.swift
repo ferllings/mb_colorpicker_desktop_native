@@ -16,6 +16,9 @@ class MaskView: NSView {
     var image_surround_current_cursor: CGImage? {
         didSet {
             guard let cgImg = image_surround_current_cursor else {
+                #if DEBUG
+                    print("no image")
+                #endif
                 return
             }
             let ns_bitmap_image = NSBitmapImageRep(cgImage: cgImg)
@@ -40,6 +43,9 @@ class MaskView: NSView {
                     CAPTUREED_PIXEL_COLOR_R[CAPTURE_HEIGHT-1-y][x] = fixedColor.red
                     CAPTUREED_PIXEL_COLOR_G[CAPTURE_HEIGHT-1-y][x] = fixedColor.green
                     CAPTUREED_PIXEL_COLOR_B[CAPTURE_HEIGHT-1-y][x] = fixedColor.blue
+                    #if DEBUG
+                        print("fixedColor: \(fixedColor)")
+                    #endif
                 }
             }
         }
@@ -96,15 +102,7 @@ class MaskView: NSView {
         if zoomed_image_surround_current_cursor != nil {
             zoomed_image_surround_current_cursor = nil
         }
-        guard let window_list = CGWindowListCopyWindowInfo(.optionOnScreenOnly, kCGNullWindowID) else {
-            return
-        }
-        let window_list_size = CFArrayGetCount(window_list)
-        var window_list_filtered = CFArrayCreateMutableCopy(kCFAllocatorDefault, window_list_size, window_list)
-        let main_window_id = window?.windowNumber
-        for idx in (0...window_list_size-1).reversed() where CFArrayGetValueAtIndex(window_list, idx).assumingMemoryBound(to: Int.self).pointee == main_window_id {
-            CFArrayRemoveValueAtIndex(window_list_filtered, idx)
-        }
+        let window_list_filtered = windowList().takeUnretainedValue()
         guard let event = CGEvent(source: nil) else {
             return
         }
@@ -122,20 +120,14 @@ class MaskView: NSView {
                            cursorPoint: cursor_position)
         }
         current_color_space = color_space_list[display_id_idx]
-        let rect = CGRect(x: CGFloat(CAPTURE_WIDTH/2),
-                          y: CGFloat(CAPTURE_HEIGHT/2),
+        let rect = CGRect(x: cursor_position.x-CGFloat(CAPTURE_WIDTH/2),
+                          y: cursor_position.y-CGFloat(CAPTURE_HEIGHT/2),
                           width: CGFloat(CAPTURE_WIDTH),
                           height: CGFloat(CAPTURE_HEIGHT))
-        guard let windowArray = window_list_filtered else {
-            return
-        }
         image_surround_current_cursor = CGImage(windowListFromArrayScreenBounds: rect,
-                                                windowArray: windowArray,
+                                                windowArray: window_list_filtered,
                                                 imageOption: .nominalResolution)
         drawPixels()
-        defer {
-            window_list_filtered = nil
-        }
     }
 }
 

@@ -60,9 +60,15 @@ class MaskWindow: NSWindow {
             let r = Int(roundf(Float(delegate.TheR)*255.0))
             let g = Int(roundf(Float(delegate.TheG)*255.0))
             let b = Int(roundf(Float(delegate.TheB)*255.0))
-            swiftprintf(format: "#%02X%02X%02X\n", r, g, b)
-            fflush(stdout)
+            print("\(r.format())\(g.format())\(b.format())\n")
+            fflush(__stdoutp)
         }
         super.close()
+    }
+}
+
+extension Int {
+    func format(_ f: String = ".2") -> String {
+        return String(format: "%\(f)d", self)
     }
 }
