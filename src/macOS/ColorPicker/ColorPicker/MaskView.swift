@@ -9,11 +9,11 @@ import Cocoa
 
 class MaskView: NSView {
 
-    let display_id_list_size: UInt32 = 16
-    var display_id_list: [CGDirectDisplayID]
-    var color_space_list: [CGColorSpace]
-    var display_bound_list: [CGRect]
-    var image_surround_current_cursor: CGImage? {
+    fileprivate let display_id_list_size: UInt32 = 16
+    fileprivate var display_id_list: [CGDirectDisplayID]
+    fileprivate var color_space_list: [CGColorSpace]
+    fileprivate var display_bound_list: [CGRect]
+    fileprivate var image_surround_current_cursor: CGImage? {
         didSet {
             guard let cgImg = image_surround_current_cursor else {
                 #if DEBUG
@@ -43,20 +43,17 @@ class MaskView: NSView {
                     CAPTUREED_PIXEL_COLOR_R[CAPTURE_HEIGHT-1-y][x] = fixedColor.red
                     CAPTUREED_PIXEL_COLOR_G[CAPTURE_HEIGHT-1-y][x] = fixedColor.green
                     CAPTUREED_PIXEL_COLOR_B[CAPTURE_HEIGHT-1-y][x] = fixedColor.blue
-                    #if DEBUG
-                        print("fixedColor: \(fixedColor)")
-                    #endif
                 }
             }
         }
     }
-    var zoomed_image_surround_current_cursor: CGImage?
-    var current_color_space: CGColorSpace?
-    var mask_circle: CGImage?
-    var display_count: UInt32 = 0
-    var CAPTUREED_PIXEL_COLOR_R: [[CGFloat]]
-    var CAPTUREED_PIXEL_COLOR_G: [[CGFloat]]
-    var CAPTUREED_PIXEL_COLOR_B: [[CGFloat]]
+    fileprivate var zoomed_image_surround_current_cursor: CGImage?
+    fileprivate var current_color_space: CGColorSpace?
+    fileprivate var mask_circle: CGImage?
+    fileprivate var display_count: UInt32 = 0
+    fileprivate var CAPTUREED_PIXEL_COLOR_R: [[CGFloat]]
+    fileprivate var CAPTUREED_PIXEL_COLOR_G: [[CGFloat]]
+    fileprivate var CAPTUREED_PIXEL_COLOR_B: [[CGFloat]]
 
     init?(failedCallBack:((Error?) -> Void)? = nil) {
         // 初始化数组

@@ -10,8 +10,7 @@ import Cocoa
 class MaskWindow: NSWindow {
 
     fileprivate var timer:Timer!
-    let hook = MouseEventHook()
-
+    private let hook = MouseEventHook()
     init() {
         let event = CGEvent(source: nil)
         var mouse_pos = event?.unflippedLocation
