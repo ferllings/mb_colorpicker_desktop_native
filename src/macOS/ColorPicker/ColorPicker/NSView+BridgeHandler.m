@@ -16,7 +16,7 @@
     CFMutableArrayRef window_list_filtered = CFArrayCreateMutableCopy(kCFAllocatorDefault, window_list_size, window_list);
     NSInteger main_window_id = self.window.windowNumber;
     for (NSInteger idx = window_list_size - 1; idx >= 0; --idx) {
-        if( main_window_id == (CGWindowID)(uintptr_t)CFArrayGetValueAtIndex(window_list, idx)) {
+        if(main_window_id == (CGWindowID)(uintptr_t)CFArrayGetValueAtIndex(window_list, idx)) {
             CFArrayRemoveValueAtIndex(window_list_filtered, idx);
         }
     }

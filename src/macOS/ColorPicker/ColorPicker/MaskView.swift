@@ -7,9 +7,9 @@
 
 import Cocoa
 
-class MaskView: NSView {
+final class MaskView: NSView {
 
-    fileprivate let display_id_list_size: UInt32 = 16
+    fileprivate let display_id_list_size = 16
     fileprivate var display_id_list: [CGDirectDisplayID]
     fileprivate var color_space_list: [CGColorSpace]
     fileprivate var display_bound_list: [CGRect]
@@ -62,9 +62,9 @@ class MaskView: NSView {
         CAPTUREED_PIXEL_COLOR_G = Array(repeating: initializedValue, count: CAPTURE_WIDTH)
         CAPTUREED_PIXEL_COLOR_B = Array(repeating: initializedValue, count: CAPTURE_WIDTH)
 
-        display_id_list = Array(repeating: 0, count: Int(display_id_list_size))
-        color_space_list = Array(repeating: CGColorSpace(name: CGColorSpace.sRGB)!, count: Int(display_id_list_size))
-        display_bound_list = Array(repeating: CGRect.zero, count: Int(display_id_list_size))
+        display_id_list = Array(repeating: 0, count: display_id_list_size)
+        color_space_list = Array(repeating: CGColorSpace(name: CGColorSpace.sRGB)!, count: display_id_list_size)
+        display_bound_list = Array(repeating: CGRect.zero, count: display_id_list_size)
 
         super.init(frame: .zero)
         do {
@@ -82,7 +82,7 @@ class MaskView: NSView {
     override func draw(_ dirtyRect: NSRect) {
         let ctx = NSGraphicsContext.current?.cgContext
         let wnd_rect = CGRect(x: 0, y: 0, width: UI_WINDOW_WIDTH, height: UI_WINDOW_HEIGHT)
-        // draw the zoomed image suround cursor
+        // draw the zoomed image surround cursor
         if let cursor = zoomed_image_surround_current_cursor {
             ctx?.draw(cursor, in: wnd_rect)
         }
@@ -92,7 +92,7 @@ class MaskView: NSView {
         }
     }
 
-    func refreshPictureSurroundCurrentCursor() {
+    private func refreshPictureSurroundCurrentCursor() {
         if image_surround_current_cursor != nil {
             image_surround_current_cursor = nil
         }
@@ -154,7 +154,7 @@ extension MaskView {
                                   context: NSGraphicsContext.current,
                                   hints: nil)
         var displayCount: UInt32 = 0
-        if CGError.success != CGGetActiveDisplayList(display_id_list_size, &display_id_list, &displayCount) {
+        if CGError.success != CGGetActiveDisplayList(UInt32(display_id_list_size), &display_id_list, &displayCount) {
             let error = NSError(domain: error_domain,
                                 code: -1001,
                                 userInfo: [NSLocalizedDescriptionKey: "CGGetActiveDisplayList Failed"])
@@ -256,8 +256,7 @@ extension MaskView {
                           y: CGFloat(8+1+(1+GRID_PIXEL)*y-1),
                           width: CGFloat(GRID_PIXEL+2),
                           height: CGFloat(GRID_PIXEL+2))
-        ctx?.setFillColor(red: 0, green: 0, blue: 0, alpha: 1)
-        ctx?.fill(rect)
+       
 
         rect.origin.x = CGFloat(8+1+(1+GRID_PIXEL)*x)
         rect.origin.y = CGFloat(8+1+(1+GRID_PIXEL)*y)

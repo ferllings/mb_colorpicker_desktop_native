@@ -7,7 +7,7 @@
 
 import Cocoa
 
-class MaskWindow: NSWindow {
+final class MaskWindow: NSWindow {
 
     fileprivate var timer:Timer!
     private let hook = MouseEventHook()
@@ -27,11 +27,7 @@ class MaskWindow: NSWindow {
         level = .statusBar
         alphaValue = 1.0
         isOpaque = false
-        contentView = MaskView { error in
-            if let err = error {
-                print("Failed to creat mask view: \(err.localizedDescription)")
-            }
-        }
+        contentView = MaskView()
         timer = Timer(timeInterval: 1.0/25.0,
                       target: self,
                       selector: #selector(MaskWindow.onTimerClick(_:)),
@@ -45,7 +41,7 @@ class MaskWindow: NSWindow {
         return true
     }
 
-    @objc func onTimerClick(_ sender: Timer) {
+    @objc private func onTimerClick(_ sender: Timer) {
         if let view = self.contentView as? MaskView {
             view.refreshPictureSurroundCurrentCursor()
             view.display()
