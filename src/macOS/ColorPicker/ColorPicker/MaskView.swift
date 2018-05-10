@@ -92,7 +92,7 @@ final class MaskView: NSView {
         }
     }
 
-    private func refreshPictureSurroundCurrentCursor() {
+    func refreshPictureSurroundCurrentCursor() {
         if image_surround_current_cursor != nil {
             image_surround_current_cursor = nil
         }

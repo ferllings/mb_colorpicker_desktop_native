@@ -60,6 +60,14 @@ final class MaskWindow: NSWindow {
         }
         super.close()
     }
+
+    override func keyDown(with event: NSEvent) {
+        guard event.keyCode != 53 else {
+            close()
+            return
+        }
+        super.keyDown(with: event)
+    }
 }
 
 extension Int {
