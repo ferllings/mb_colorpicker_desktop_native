@@ -9,6 +9,8 @@ import Cocoa
 
 final class MaskWindow: NSWindow {
 
+    var isEscPressed = false
+
     fileprivate var timer:Timer!
     private let hook = MouseEventHook()
     init() {
@@ -51,6 +53,11 @@ final class MaskWindow: NSWindow {
     override func close() {
         timer.invalidate()
         NSCursor.unhide()
+        guard !isEscPressed else {
+            print("")
+            super.close()
+            return
+        }
         if let delegate = NSApp.delegate as? AppDelegate {
             let r = Int(roundf(Float(delegate.TheR)*255.0))
             let g = Int(roundf(Float(delegate.TheG)*255.0))
@@ -63,6 +70,7 @@ final class MaskWindow: NSWindow {
 
     override func keyDown(with event: NSEvent) {
         guard event.keyCode != 53 else {
+            isEscPressed = true
             close()
             return
         }
