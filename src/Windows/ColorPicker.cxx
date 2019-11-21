@@ -464,11 +464,31 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
         PostQuitMessage(0);
     break;
     case WM_KEYDOWN:
+        if(wParam == VK_DOWN) {
+            POINT mousePos;
+            ::GetCursorPos(&mousePos);
+            ::SetCursorPos(mousePos.x, mousePos.y+1);
+        } else if(wParam == VK_UP) {
+            POINT mousePos;
+            ::GetCursorPos(&mousePos);
+            ::SetCursorPos(mousePos.x, mousePos.y-1);
+        } else if(wParam == VK_LEFT) {
+            POINT mousePos;
+            ::GetCursorPos(&mousePos);
+            ::SetCursorPos(mousePos.x-1, mousePos.y);
+        } else if(wParam == VK_RIGHT) {
+            POINT mousePos;
+            ::GetCursorPos(&mousePos);
+            ::SetCursorPos(mousePos.x+1, mousePos.y);
+        }
+    break;
     case WM_KEYUP:
     {
         if(wParam == VK_ESCAPE)
         {
             SHOULD_I_SKIP_PRINT_CAPTURED_COLOR = true;
+            PostQuitMessage(0);
+        } else if (wParam == VK_RETURN) {
             PostQuitMessage(0);
         }
     }
