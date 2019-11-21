@@ -92,12 +92,63 @@ CGFloat TheR, TheG, TheB;
 }
 
 - (void)keyDown:(NSEvent *)event {
-    if (event.keyCode == 53) {
-        isESCKeyPressed = YES;
-        [self close];
+    if( TheMainWindow == nullptr ) {
         return;
     }
-    [super keyDown:event];
+
+    CGPoint position = [TheMainWindow frame].origin;
+    auto eventM = CGEventCreate(NULL);
+    auto cursor_position = CGEventGetLocation(eventM);
+    CFRelease(eventM);
+
+    switch (event.keyCode) {
+        case 123:
+            position.x -= 1;
+            cursor_position.x -= 1;
+            CGWarpMouseCursorPosition(cursor_position);
+            [TheMainWindow setFrameOrigin: NSPointFromCGPoint(position)];
+            break;
+        case 124:
+            position.x += 1;
+            cursor_position.x += 1;
+            CGWarpMouseCursorPosition(cursor_position);
+            [TheMainWindow setFrameOrigin: NSPointFromCGPoint(position)];
+            break;
+        case 125:
+            position.y -= 1;
+            cursor_position.y += 1;
+            CGWarpMouseCursorPosition(cursor_position);
+            [TheMainWindow setFrameOrigin: NSPointFromCGPoint(position)];
+            break;
+        case 126:
+            position.y += 1;
+            cursor_position.y -= 1;
+            CGWarpMouseCursorPosition(cursor_position);
+            [TheMainWindow setFrameOrigin: NSPointFromCGPoint(position)];
+            break;
+        default:
+            [super keyUp:event];
+    }
+}
+
+- (void)keyUp:(NSEvent *)event {
+
+    switch (event.keyCode) {
+        case 53:
+            isESCKeyPressed = YES;
+            [self close];
+            break;
+        case 36:
+            [self close];
+            break;
+        case 123: // Prevent the key 'bip'
+        case 124:
+        case 125:
+        case 126:
+            break;
+        default:
+            [super keyDown:event];
+    }
 }
 
 - (void)close
@@ -451,7 +502,7 @@ MouseEventHook::Callback(CGEventTapProxy proxy, \
     {
         case kCGEventMouseMoved:
         {
-            // NSLog(@"move");
+//            NSLog(@"move");
             [NSApp activateIgnoringOtherApps: YES];
             [TheMainWindow setFrameOrigin: mouse_pos];
         }
